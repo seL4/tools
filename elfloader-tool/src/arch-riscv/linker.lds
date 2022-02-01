@@ -32,10 +32,6 @@ SECTIONS
         /*
          * ld crashes when we add this here: *(_driver_list)
          */
-        . = ALIGN(16);
-        _archive_start = .;
-        *(._archive_cpio)
-        _archive_end = .;
     }
     . = ALIGN(16);
     .data :
@@ -44,6 +40,12 @@ SECTIONS
         *(.sdata*)
         *(.data)
         *(.data.*)
+    }
+    . = ALIGN(16);
+    ._archive_cpio : {
+        _archive_start = .;
+        *(._archive_cpio)
+        _archive_end = .;
     }
     . = ALIGN(16);
     .bss :
