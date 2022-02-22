@@ -635,7 +635,8 @@ extern void invalidate_icache(void);
  * to ensure that it doesn't occupy memory that it needs to load the
  * kernel and user applications into.
  */
-char * fixup_image_base(void) {
+char *fixup_image_base(char const *fdt)
+{
     char *load_base = _start;
     char *target_base = (char *) IMAGE_START_ADDR;
     if (load_base == target_base) {
@@ -658,6 +659,24 @@ char * fixup_image_base(void) {
         (_archive_start >= target_base && _archive_start < target_end)) {
         abort();
     }
+
+    /* If a fdt was passed in from the previous boot stage, also
+     * check that it isn't overwritten.
+     */
+    if (fdt) {
+        size_t dtb_size = fdt_size(fdt);
+        const char *fdt_end = fdt + dtb_size;
+        if (image_size < dtb_size) {
+            /* Assume the dtb is smaller than the images size to
+             * simplify region check */
+            abort();
+        }
+        if ((fdt >= target_base && fdt < target_end) ||
+            (fdt_end >= target_base && fdt_end < target_end)) {
+            abort();
+        }
+    }
+
 
     /* Perform the move and clean/invalidate caches if necessary */
     char *ret = memmove(target_base, load_base, image_size);

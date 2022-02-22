@@ -23,6 +23,7 @@ BEGIN_FUNC(_start)
      * Binary images may not be loaded in the correct location.
      * Try and move ourselves so we're in the right place.
      */
+    mov     x0, #0 /* Arg 0 of fixup_image_base is NULL */
     bl      fixup_image_base
     mov     x2, x0
     /* restore original arguments for next step */

@@ -62,6 +62,7 @@ _start:
    * Binary images may not be loaded in the correct location.
    * Try and move ourselves so we're in the right place.
    */
+  mv a0, a1 /* Pass dtb as first argument */
   jal fixup_image_base
   /* fixup_image_base returns 0 if no need to move */
   beqz     a0, 1f
